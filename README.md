@@ -9,3 +9,5 @@ value: "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -File "C:\Too
 example:
 
 ![image](https://user-images.githubusercontent.com/16505004/204710885-3baad1b0-1a5f-45e5-a9a6-71694ac546bc.png)
+
+Requirements:  PowerShell 5.1, ImageMagick convert.exe
