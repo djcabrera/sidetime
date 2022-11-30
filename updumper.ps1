@@ -12,7 +12,7 @@ $dumpUrlBase = "https://sunset.sidetime.org/temp"
 add-type -AssemblyName System.Drawing
 $imgData = New-Object System.Drawing.Bitmap $imgSource
 $imgHash = Get-FileHash $imgSource
-$hashSuffix = $imgHash.Hash.Substring(0,8)
+$hashSuffix = $imgHash.Hash.Substring(0,5)
 
 #get image file details
 $imgProps = Get-ItemProperty $imgSource
@@ -29,7 +29,7 @@ Copy-Item -Path $imgSource -Destination $imgDest
 
 #create thumbnail using ImageMagick
 $thumbDest = "$($imgDestBase)\$($hashSuffix.ToLower())-thumb$($imgProps.Extension.ToLower())"
-& C:\tools\ImageMagick\convert.exe $imgSource -resize 800x800 -quality 40 $thumbDest
+& C:\tools\ImageMagick\convert.exe $imgSource -resize 800x800 $thumbDest
 $imgThumbUrl = "$($dumpUrlBase)/$($hashSuffix.ToLower())-thumb$($imgProps.Extension.ToLower())"
 
 #html to use for image landing page
@@ -44,26 +44,26 @@ $imgHtml = @"
             padding: 0;
         }
         .imgbox {
-            display: grid;
-            height: 75%;
+
+            height: 100%;
         }
         .center-fit {
-            max-width: 75%;
-            max-height: 75vh;
+            max-width: 100%;
+            max-height: 100vh;
             margin: auto;
         }
     </style>
     </head>
     <body style='color: white; font-family: Helvetica,Arial,sans-serif;'>
-        <div style='padding: 1em; text-align: center'>
+        <div style='padding: 0.5em; text-align: center'>
             <p style='font-size: 1.5em;
                 margin: 0;
                 margin-top: 0.5em;
                 margin-bottom: 0.5em;'>
-                compressed version below while original lives <a href="$($imgUrl)">here</a>.
+                Compressed version below - Click image to load <a href=""$($imgUrl)">original</a>.
                 <div class="imgbox">
-                 <img class="center-fit" src="$($imgThumbUrl)">
-                 <br>original name: $($imgProps.Name), resolution: $($imgPixels), size: $($imgSize)
+                 <a href="$($imgUrl)"><img class="center-fit" src="$($imgThumbUrl)"></a>
+                 <br><br>original name: $($imgProps.Name), resolution: $($imgPixels), size: $($imgSize)
                 </div>         
             </p>
         </div>
