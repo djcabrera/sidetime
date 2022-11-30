@@ -4,7 +4,7 @@ Param
      [String] $imgSource
 )
 
-#destination
+#destination (hosting via IIS, locally, so this will change as you see fit)
 $imgDestBase = "C:\dump"
 $dumpUrlBase = "https://sunset.sidetime.org/temp"
 
