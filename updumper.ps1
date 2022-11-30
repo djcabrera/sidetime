@@ -4,6 +4,9 @@ Param
      [String] $imgSource
 )
 
+#measure perf
+$scriptStartTime = $(Get-Date)
+
 #destination (hosting via IIS, locally, so this will change as you see fit)
 $imgDestBase = "C:\dump"
 $dumpUrlBase = "https://sunset.sidetime.org/temp"
@@ -27,14 +30,28 @@ $imgSize =  "$([math]::Round(($imgProps.Length) / 1000000, "2")) MB"
 #copy image over
 Copy-Item -Path $imgSource -Destination $imgDest
 
-#create thumbnail using ImageMagick
+#thumbnail
 $thumbDest = "$($imgDestBase)\$($hashSuffix.ToLower())-thumb$($imgProps.Extension.ToLower())"
 & C:\tools\ImageMagick\convert.exe $imgSource -resize 800x800 $thumbDest
 $imgThumbUrl = "$($dumpUrlBase)/$($hashSuffix.ToLower())-thumb$($imgProps.Extension.ToLower())"
 
+#thumb info
+$thumbProps = Get-ItemProperty $thumbDest
+$thumbSize =  "$([math]::Round(($thumbProps.Length) / 1000000, "2")) MB"
+
+#thumb color info
+$primaryColor = & C:\tools\ImageMagick\convert.exe $thumbDest -resize 1x1 txt:- | Out-String
+$bgColor = $primaryColor.Split("#")[2].Substring(0,6)
+
+# process time
+$scriptEndTime = $(Get-Date)
+$scriptRunTime = ($scriptEndTime - $scriptStartTime)
+$scriptRunTimeSeconds = [math]::round($scriptRunTime.TotalSeconds,"2")
+
 #html to use for image landing page
+#img html
 $imgHtml = @"
-<html style='background-color: #01b0c4'>
+<html style='background-color: #$($bgColor)'>
     <head>
         <title>Temp</title>
         <meta charset='utf-8'>
@@ -60,10 +77,10 @@ $imgHtml = @"
                 margin: 0;
                 margin-top: 0.5em;
                 margin-bottom: 0.5em;'>
-                Compressed version below - Click image to load <a href=""$($imgUrl)">original</a>.
+                Compressed version below - Click image to load <a href="$($imgUrl)" style="color: white">original</a>.
                 <div class="imgbox">
                  <a href="$($imgUrl)"><img class="center-fit" src="$($imgThumbUrl)"></a>
-                 <br><br>original name: $($imgProps.Name), resolution: $($imgPixels), size: $($imgSize)
+                 <br><br>original name: $($imgProps.Name), resolution: $($imgPixels), size: $($imgSize) (preview size: $($thumbSize)) <br><br>** initial task processed in $($scriptRunTimeSeconds) seconds
                 </div>         
             </p>
         </div>
