@@ -29,7 +29,7 @@ Copy-Item -Path $imgSource -Destination $imgDest
 
 #create thumbnail using ImageMagick
 $thumbDest = "$($imgDestBase)\$($hashSuffix.ToLower())-thumb$($imgProps.Extension.ToLower())"
-& C:\tools\ImageMagick\convert.exe $imgSource -resize 800x800 $thumbDest
+& C:\tools\ImageMagick\convert.exe $imgSource -resize 800x800 -quality 40 $thumbDest
 $imgThumbUrl = "$($dumpUrlBase)/$($hashSuffix.ToLower())-thumb$($imgProps.Extension.ToLower())"
 
 #html to use for image landing page
